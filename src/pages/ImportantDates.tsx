@@ -14,7 +14,7 @@ const importantDates = [
   { date: '2024-11-05', title: 'General Election Day', type: 'election' },
 ];
 
-const Calendar = () => {
+const ImportantDates = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -387,4 +387,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar; 
+export default ImportantDates; 
