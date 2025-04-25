@@ -7,10 +7,10 @@ import {
   IconButton,
   Box,
 } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
-import PublicIcon from '@mui/icons-material/Public';
-import FlagIcon from '@mui/icons-material/Flag';
+import PersonIcon from '@mui/icons-material/Person';
+import GavelIcon from '@mui/icons-material/Gavel';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import EventIcon from '@mui/icons-material/Event';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 interface NavbarProps {
@@ -45,24 +45,24 @@ const Navbar = ({ onLogout }: NavbarProps) => {
           sx={{ width: '100%' }}
         >
           <BottomNavigationAction
-            label="Home"
-            value="/"
-            icon={<HomeIcon />}
+            label="Voter Info"
+            value="/voter-info"
+            icon={<PersonIcon />}
           />
           <BottomNavigationAction
-            label="State"
-            value="/state"
-            icon={<LocationCityIcon />}
+            label="Government"
+            value="/government-activity"
+            icon={<GavelIcon />}
           />
           <BottomNavigationAction
-            label="Federal"
-            value="/country"
-            icon={<FlagIcon />}
+            label="Issues"
+            value="/important-issues"
+            icon={<CampaignIcon />}
           />
           <BottomNavigationAction
-            label="Global"
-            value="/global"
-            icon={<PublicIcon />}
+            label="Calendar"
+            value="/calendar"
+            icon={<EventIcon />}
           />
         </BottomNavigation>
         <IconButton 

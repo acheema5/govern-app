@@ -3,9 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider, createTheme, CssBaseline, Box, Container, CircularProgress } from '@mui/material';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import State from './pages/State';
-import Country from './pages/Country';
-import Global from './pages/Global';
+import VoterInfo from './pages/VoterInfo';
+import GovernmentActivity from './pages/GovernmentActivity';
+import ImportantIssues from './pages/ImportantIssues';
+import Calendar from './pages/Calendar';
 import Login from './pages/Login';
 import useAuth from './hooks/useAuth';
 
@@ -97,26 +98,34 @@ function App() {
                 } 
               />
               <Route 
-                path="/state" 
+                path="/voter-info" 
                 element={
                   <ProtectedRoute>
-                    <State />
+                    <VoterInfo />
                   </ProtectedRoute>
                 } 
               />
               <Route 
-                path="/country" 
+                path="/government-activity" 
                 element={
                   <ProtectedRoute>
-                    <Country />
+                    <GovernmentActivity />
                   </ProtectedRoute>
                 } 
               />
               <Route 
-                path="/global" 
+                path="/important-issues" 
                 element={
                   <ProtectedRoute>
-                    <Global />
+                    <ImportantIssues />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/calendar" 
+                element={
+                  <ProtectedRoute>
+                    <Calendar />
                   </ProtectedRoute>
                 } 
               />
