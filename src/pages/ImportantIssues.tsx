@@ -33,8 +33,12 @@ const issues = [
 
 const ImportantIssues = () => {
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ 
+      p: 2,
+      maxWidth: '1200px',
+      margin: '0 auto'
+    }}>
+      <Typography variant="h4" gutterBottom align="center">
         Important Issues
       </Typography>
       
@@ -42,9 +46,11 @@ const ImportantIssues = () => {
         display: 'flex', 
         flexWrap: 'wrap', 
         gap: 3,
+        justifyContent: 'center',
         '& > *': {
           flex: '1 1 300px',
           minWidth: '300px',
+          maxWidth: '500px'
         }
       }}>
         {issues.map((issue, index) => (

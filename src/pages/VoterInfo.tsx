@@ -6,13 +6,17 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const VoterInfo = () => {
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ 
+      p: 2,
+      maxWidth: '800px',
+      margin: '0 auto'
+    }}>
+      <Typography variant="h4" gutterBottom align="center">
         Voter Information
       </Typography>
       
       <Paper sx={{ p: 2, mb: 2 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom align="center">
           Your Voter Status
         </Typography>
         <List>
@@ -35,7 +39,7 @@ const VoterInfo = () => {
       </Paper>
 
       <Paper sx={{ p: 2, mb: 2 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom align="center">
           Polling Location
         </Typography>
         <List>
