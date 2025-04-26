@@ -104,155 +104,177 @@ const Login = () => {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom align="center">
-          Welcome to CivicEngage
-        </Typography>
-        <Typography variant="body1" paragraph align="center" color="textSecondary">
-          Your platform for civic engagement
-        </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          width: '100%',
+          maxWidth: '400px',
+          mx: 'auto'
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%'
+          }}
+        >
+          <Typography variant="h4" gutterBottom align="center">
+            Welcome to CivicEngage
+          </Typography>
+          <Typography variant="body1" paragraph align="center" color="textSecondary">
+            Your platform for civic engagement
+          </Typography>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
 
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-          <Tabs value={tabValue} onChange={handleTabChange} centered>
-            <Tab label="Login" />
-            <Tab label="Sign Up" />
-          </Tabs>
-        </Box>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+            <Tabs value={tabValue} onChange={handleTabChange} centered>
+              <Tab label="Login" />
+              <Tab label="Sign Up" />
+            </Tabs>
+          </Box>
 
-        <TabPanel value={tabValue} index={0}>
-          <form onSubmit={handleLogin}>
-            <Box display="flex" flexDirection="column" gap={3}>
-              <TextField
-                label="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                fullWidth
-              />
+          <TabPanel value={tabValue} index={0}>
+            <form onSubmit={handleLogin}>
+              <Box display="flex" flexDirection="column" gap={3}>
+                <TextField
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  fullWidth
+                />
 
-              <TextField
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                fullWidth
-              />
+                <TextField
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  fullWidth
+                />
 
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                fullWidth
-              >
-                Login
-              </Button>
-
-              {email === 'admin@civicengage.com' && (
                 <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleSeedDatabase}
-                  sx={{ mt: 2 }}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  fullWidth
                 >
-                  Seed Database (Admin Only)
+                  Login
                 </Button>
-              )}
-            </Box>
-          </form>
-        </TabPanel>
 
-        <TabPanel value={tabValue} index={1}>
-          <form onSubmit={handleSignup}>
-            <Box display="flex" flexDirection="column" gap={3}>
-              <TextField
-                label="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                fullWidth
-              />
-
-              <TextField
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                fullWidth
-              />
-
-              <TextField
-                label="Location (City, State)"
-                value={preferences.location}
-                onChange={(e) =>
-                  setPreferences({ ...preferences, location: e.target.value })
-                }
-                fullWidth
-              />
-
-              <Autocomplete
-                multiple
-                options={interestOptions}
-                value={preferences.interests}
-                onChange={(_, newValue) =>
-                  setPreferences({ ...preferences, interests: newValue })
-                }
-                renderInput={(params) => (
-                  <TextField {...params} label="Topics of Interest" />
+                {email === 'admin@civicengage.com' && (
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleSeedDatabase}
+                    sx={{ mt: 2 }}
+                  >
+                    Seed Database (Admin Only)
+                  </Button>
                 )}
-                renderTags={(value, getTagProps) =>
-                  value.map((option, index) => (
-                    <Chip
-                      label={option}
-                      {...getTagProps({ index })}
-                      key={option}
-                    />
-                  ))
-                }
-              />
+              </Box>
+            </form>
+          </TabPanel>
 
-              <FormControl fullWidth>
-                <InputLabel>News Preference</InputLabel>
-                <Select
-                  value={preferences.newsPreference}
-                  label="News Preference"
+          <TabPanel value={tabValue} index={1}>
+            <form onSubmit={handleSignup}>
+              <Box display="flex" flexDirection="column" gap={3}>
+                <TextField
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  fullWidth
+                />
+
+                <TextField
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  fullWidth
+                />
+
+                <TextField
+                  label="Location (City, State)"
+                  value={preferences.location}
                   onChange={(e) =>
-                    setPreferences({
-                      ...preferences,
-                      newsPreference: e.target.value as UserPreferences['newsPreference'],
-                    })
+                    setPreferences({ ...preferences, location: e.target.value })
                   }
-                >
-                  <MenuItem value="all">Show All Sources</MenuItem>
-                  <MenuItem value="left">Left-Leaning Sources</MenuItem>
-                  <MenuItem value="center">Centrist Sources</MenuItem>
-                  <MenuItem value="right">Right-Leaning Sources</MenuItem>
-                </Select>
-              </FormControl>
+                  fullWidth
+                />
 
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                fullWidth
-              >
-                Sign Up
-              </Button>
-            </Box>
-          </form>
-        </TabPanel>
-      </Paper>
+                <Autocomplete
+                  multiple
+                  options={interestOptions}
+                  value={preferences.interests}
+                  onChange={(_, newValue) =>
+                    setPreferences({ ...preferences, interests: newValue })
+                  }
+                  renderInput={(params) => (
+                    <TextField {...params} label="Topics of Interest" />
+                  )}
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => (
+                      <Chip
+                        label={option}
+                        {...getTagProps({ index })}
+                        key={option}
+                      />
+                    ))
+                  }
+                />
+
+                <FormControl fullWidth>
+                  <InputLabel>News Preference</InputLabel>
+                  <Select
+                    value={preferences.newsPreference}
+                    label="News Preference"
+                    onChange={(e) =>
+                      setPreferences({
+                        ...preferences,
+                        newsPreference: e.target.value as UserPreferences['newsPreference'],
+                      })
+                    }
+                  >
+                    <MenuItem value="all">Show All Sources</MenuItem>
+                    <MenuItem value="left">Left-Leaning Sources</MenuItem>
+                    <MenuItem value="center">Centrist Sources</MenuItem>
+                    <MenuItem value="right">Right-Leaning Sources</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  fullWidth
+                >
+                  Sign Up
+                </Button>
+              </Box>
+            </form>
+          </TabPanel>
+        </Paper>
+      </Box>
     </Container>
   );
 };

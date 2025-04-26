@@ -12,17 +12,78 @@ import useAuth from './hooks/useAuth';
 
 const theme = createTheme({
   palette: {
+    mode: 'light', // easy dark mode toggle in future
     primary: {
-      main: '#1976d2',
+      main: '#0D47A1', // Deep professional blue
+      light: '#5472d3',
+      dark: '#002171',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#00C853', // Fresh green (trustworthy, active)
+      light: '#5efc82',
+      dark: '#009624',
     },
     background: {
-      default: '#f5f5f5',
+      default: '#fafafa', // Softer white
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#1a1a1a',
+      secondary: '#555555',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontSize: '2.5rem',
+      fontWeight: 700,
+    },
+    h2: {
+      fontSize: '2rem',
+      fontWeight: 700,
+    },
+    h4: {
+      fontSize: '1.8rem',
+      fontWeight: 600,
+    },
+    h6: {
+      fontSize: '1.25rem',
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: '1rem',
+    },
+    body2: {
+      fontSize: '0.95rem',
+    },
+    button: {
+      textTransform: 'none', // No ugly all-caps on buttons
+    },
+  },
+  spacing: 8, // 8px spacing system
+  shape: {
+    borderRadius: 12, // Softer card/button rounding
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          padding: '1rem',
+          borderRadius: '12px',
+          boxShadow: '0px 4px 12px rgba(0,0,0,0.05)',
+        },
+      },
     },
   },
 });
+
 
 // Wrapper component to protect routes
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -65,7 +126,9 @@ function App() {
           display: 'flex', 
           flexDirection: 'column', 
           minHeight: '100vh',
-          pb: 7 // Add padding bottom for the navigation bar
+          pb: 7,
+          alignItems: 'center',
+          width: '100%'
         }}>
           <Container 
             maxWidth="lg" 
@@ -73,8 +136,8 @@ function App() {
               flex: 1,
               display: 'flex',
               flexDirection: 'column',
-              height: '100vh',
-              overflow: 'auto',
+              alignItems: 'center',
+              width: '100%',
               pt: 2
             }}
           >

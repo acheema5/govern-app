@@ -9,6 +9,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import GovernmentDocument from '../components/GovernmentDocument';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -72,87 +73,6 @@ interface ExecutiveOrder {
   aiSummary: string;
 }
 
-interface GovernmentDocumentProps {
-  id: string;
-  title: string;
-  subtitle?: string;
-  summary: string;
-  fullText: string;
-  aiSummary?: string;
-  date: string;
-  expanded: boolean;
-  onExpand: () => void;
-}
-
-const GovernmentDocument: React.FC<GovernmentDocumentProps> = ({
-  id,
-  title,
-  subtitle,
-  summary,
-  fullText,
-  aiSummary,
-  date,
-  expanded,
-  onExpand
-}) => {
-  return (
-    <Box>
-      <ListItem>
-        <Box sx={{ width: '100%' }}>
-          <Typography variant="body2" color="text.primary" gutterBottom>
-            {title}
-          </Typography>
-          {subtitle && (
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              {subtitle}
-            </Typography>
-          )}
-          {summary && summary !== 'No summary available' && (
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              {summary}
-            </Typography>
-          )}
-          <Typography variant="caption" color="text.secondary" display="block">
-            {date}
-          </Typography>
-          <Collapse in={expanded}>
-            <Box sx={{ mt: 1 }}>
-              {aiSummary && (
-                <>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    <strong>AI Summary:</strong>
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
-                    {aiSummary}
-                  </Typography>
-                </>
-              )}
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                <Link 
-                  href={fullText} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  sx={{ color: 'primary.main' }}
-                >
-                  View full text
-                </Link>
-              </Typography>
-            </Box>
-          </Collapse>
-          <IconButton
-            onClick={onExpand}
-            size="small"
-            sx={{ position: 'absolute', right: 8, top: 8 }}
-          >
-            {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
-        </Box>
-      </ListItem>
-      <Divider />
-    </Box>
-  );
-};
-
 // Function to generate AI summary with timeout
 const generateAISummary = async (text: string, title: string, type: 'bill' | 'ruling' | 'order' = 'bill'): Promise<string> => {
   try {
@@ -202,13 +122,6 @@ Text: ${text.substring(0, 4000)}
 
 Summary:`;
 
-    console.log('Making API request to Groq...');
-    console.log('Request URL:', 'https://api.groq.com/v1/chat/completions');
-    console.log('Request Headers:', {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey.substring(0, 5)}...`
-    });
-
     const requestBody = {
       model: "llama2-70b",
       messages: [
@@ -230,76 +143,29 @@ Summary:`;
       stream: false
     };
 
-    console.log('Request Body:', JSON.stringify(requestBody, null, 2));
+    const response = await fetch('https://api.groq.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(requestBody)
+    });
 
-    try {
-      const response = await fetch('https://api.groq.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify(requestBody)
-      });
+    if (!response.ok) {
+      throw new Error(`Groq API error: ${response.status} - ${response.statusText}`);
+    }
 
-      console.log('Groq API Response Status:', response.status);
-      console.log('Groq API Response Headers:', Object.fromEntries(response.headers.entries()));
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Groq API Error Response:', errorText);
-        try {
-          const errorData = JSON.parse(errorText);
-          console.error('Groq API Error Details:', {
-            status: response.status,
-            statusText: response.statusText,
-            error: errorData,
-            headers: Object.fromEntries(response.headers.entries())
-          });
-        } catch (e) {
-          console.error('Could not parse error response as JSON:', errorText);
-        }
-        
-        // Provide more specific error messages based on status code
-        if (response.status === 401) {
-          throw new Error('Invalid or missing Groq API key. Please check your .env file and ensure VITE_GROQ_API_KEY is set correctly.');
-        } else if (response.status === 404) {
-          throw new Error('Groq API endpoint not found. Please verify the API endpoint is correct.');
-        } else {
-          throw new Error(`Groq API error: ${response.status} - ${response.statusText}`);
-        }
-      }
+    const data = await response.json();
+    const aiSummary = data.choices[0]?.message?.content;
 
-      const data = await response.json();
-      console.log('Groq API Response Data:', data);
-      
-      const aiSummary = data.choices[0]?.message?.content;
-      console.log('Generated AI Summary:', aiSummary);
-
-      if (!aiSummary || aiSummary.length < 20) {
-        console.warn('AI summary too short or empty');
-        return generateFallbackSummary(text, title);
-      }
-
-      return aiSummary;
-    } catch (error: any) {
-      console.error('Detailed Error in AI Summary Generation:', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-        response: error.response,
-        cause: error.cause
-      });
+    if (!aiSummary || aiSummary.length < 20) {
       return generateFallbackSummary(text, title);
     }
-  } catch (error: any) {
-    console.error('Detailed Error in AI Summary Generation:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-      response: error.response,
-      cause: error.cause
-    });
+
+    return aiSummary;
+  } catch (error) {
+    console.error('Error in AI summary generation:', error);
     return generateFallbackSummary(text, title);
   }
 };
@@ -307,10 +173,8 @@ Summary:`;
 // Function to generate fallback summary
 const generateFallbackSummary = (text: string, title: string): string => {
   try {
-    // Extract key sentences that contain important legislative terms
     const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
     
-    // Look for sentences that contain key legislative terms
     const keyTerms = [
       'shall', 'authorize', 'appropriate', 'establish', 'require', 
       'provide', 'create', 'prohibit', 'amend', 'repeal', 'direct',
@@ -322,23 +186,20 @@ const generateFallbackSummary = (text: string, title: string): string => {
       .filter(s => {
         const lowerSentence = s.toLowerCase();
         return keyTerms.some(term => lowerSentence.includes(term)) &&
-               lowerSentence.length > 20; // Ensure sentence has meaningful content
+               lowerSentence.length > 20;
       })
       .slice(0, 3)
       .map(s => s.trim() + '.');
 
     if (keySentences.length > 0) {
-      // Combine key sentences with a brief introduction
       return `This legislation ${title.toLowerCase()} aims to ${keySentences.join(' ')}`;
     }
 
-    // If no key sentences found, create a more descriptive summary
     const firstParagraph = text.split('\n')[0];
     if (firstParagraph && firstParagraph.length > 50) {
       return `This bill ${title.toLowerCase()} seeks to ${firstParagraph.substring(0, 200)}...`;
     }
 
-    // Final fallback
     return `This legislation ${title.toLowerCase()} focuses on ${text.substring(0, 150)}...`;
   } catch (error) {
     console.error('Error generating fallback summary:', error);
@@ -354,7 +215,6 @@ const processRulings = async (rulingsData: any[]): Promise<CourtRuling[]> => {
         const rulingContent = ruling.case_name || ruling.summary || 'No text available';
         const rulingId = ruling.id || `ruling-${Math.random()}`;
         
-        // Generate AI summary immediately
         const generatedSummary = await generateAISummary(rulingContent, ruling.case_name, 'ruling');
         
         const processedRuling: CourtRuling = {
@@ -375,10 +235,8 @@ const processRulings = async (rulingsData: any[]): Promise<CourtRuling[]> => {
     })
   );
 
-  // Filter out null values and sort by date (most recent first)
-  return processedRulings
-    .filter((ruling): ruling is CourtRuling => ruling !== null)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const validRulings = processedRulings.filter((ruling): ruling is CourtRuling => ruling !== null);
+  return validRulings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
 // Process executive orders with AI summaries
@@ -389,7 +247,6 @@ const processOrders = async (ordersData: any[]): Promise<ExecutiveOrder[]> => {
         const orderContent = order.abstract || order.title || 'No text available';
         const orderId = order.document_number || `order-${Math.random()}`;
         
-        // Generate AI summary immediately
         const generatedSummary = await generateAISummary(orderContent, order.title, 'order');
         
         const processedOrder: ExecutiveOrder = {
@@ -422,10 +279,9 @@ const processBills = async (billsData: any[]): Promise<Bill[]> => {
         const billContent = bill.summary || bill.title || 'No text available';
         const billId = bill.billNumber || `bill-${Math.random()}`;
         
-        // Generate AI summary immediately
         const generatedSummary = await generateAISummary(billContent, bill.title, 'bill');
         
-        return {
+        const processedBill: Bill = {
           id: billId,
           number: `${bill.billType?.toUpperCase() || 'H.R.'} ${bill.billNumber || 'Unknown'}`,
           title: bill.title || 'Untitled Bill',
@@ -437,6 +293,8 @@ const processBills = async (billsData: any[]): Promise<Bill[]> => {
           date: latestActionDate ? new Date(latestActionDate).toISOString().split('T')[0] : 'Unknown date',
           aiSummary: generatedSummary
         };
+        
+        return processedBill;
       } catch (error) {
         console.error(`Error processing bill:`, error);
         return null;
@@ -643,7 +501,7 @@ const GovernmentActivity = () => {
             setLoading(false);
 
             // Uncomment this code when the API is working
-            /*
+            
             // Fetch recent bills from both House and Senate
             const [houseResponse, senateResponse] = await Promise.all([
               fetch('https://api.congress.gov/v3/bill?congress=119&chamber=house&sort=latestAction&limit=10&api_key=BTqk9xWL9Hq7x6FqAhNVR5rjpQJK9cj8afy6G1f9'),
@@ -678,7 +536,7 @@ const GovernmentActivity = () => {
 
             const processedBills = await processBills(allBills);
             setBills(processedBills);
-            */
+            
           } catch (error) {
             console.error('Error in fetchBills:', error);
             setError('Failed to load bills. Using sample data.');
@@ -806,41 +664,18 @@ const GovernmentActivity = () => {
                 <TabPanel value={federalSubTab} index={1}>
                   <List>
                     {rulings.map((ruling) => (
-                      <Box key={ruling.id}>
-                        <ListItem>
-                          <ListItemText 
-                            primary={ruling.title} 
-                            secondary={
-                              <Box>
-                                <Typography variant="body2" color="text.primary">
-                                  {ruling.citation}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  {ruling.summary}
-                                </Typography>
-                                <Collapse in={expandedItems[ruling.id]}>
-                                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                    <Link 
-                                      href={ruling.fullText} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                    >
-                                      View full text
-                                    </Link>
-                                  </Typography>
-                                </Collapse>
-                              </Box>
-                            }
-                          />
-                          <IconButton
-                            onClick={() => handleItemExpand(ruling.id)}
-                            size="small"
-                          >
-                            {expandedItems[ruling.id] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                          </IconButton>
-                        </ListItem>
-                        <Divider />
-                      </Box>
+                      <GovernmentDocument
+                        key={ruling.id}
+                        id={ruling.id}
+                        title={ruling.title}
+                        subtitle={ruling.citation}
+                        summary={ruling.summary}
+                        fullText={ruling.fullText}
+                        aiSummary={ruling.aiSummary}
+                        date={ruling.date}
+                        expanded={expandedItems[ruling.id] || false}
+                        onExpand={() => handleItemExpand(ruling.id)}
+                      />
                     ))}
                   </List>
                 </TabPanel>
@@ -848,52 +683,18 @@ const GovernmentActivity = () => {
                 <TabPanel value={federalSubTab} index={2}>
                   <List>
                     {orders.map((order) => (
-                      <Box key={order.id}>
-                        <ListItem>
-                          <Box sx={{ width: '100%' }}>
-                            <Typography variant="body2" color="text.primary" gutterBottom>
-                              {order.number}
-                            </Typography>
-                            <Typography variant="body2" color="text.primary" gutterBottom>
-                              {order.title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" gutterBottom>
-                              {order.summary}
-                            </Typography>
-                            <Collapse in={expandedItems[order.id]}>
-                              <Box sx={{ mt: 1 }}>
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                  <strong>AI Summary:</strong>
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
-                                  {order.aiSummary || 'No AI summary available'}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                                  <strong>Full Text:</strong>
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  <Link 
-                                    href={order.fullText} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    sx={{ color: 'primary.main' }}
-                                  >
-                                    View full text on FederalRegister.gov
-                                  </Link>
-                                </Typography>
-                              </Box>
-                            </Collapse>
-                            <IconButton
-                              onClick={() => handleItemExpand(order.id)}
-                              size="small"
-                              sx={{ position: 'absolute', right: 8, top: 8 }}
-                            >
-                              {expandedItems[order.id] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                            </IconButton>
-                          </Box>
-                        </ListItem>
-                        <Divider />
-                      </Box>
+                      <GovernmentDocument
+                        key={order.id}
+                        id={order.id}
+                        title={order.number}
+                        subtitle={order.title}
+                        summary={order.summary}
+                        fullText={order.fullText}
+                        aiSummary={order.aiSummary}
+                        date={order.date}
+                        expanded={expandedItems[order.id] || false}
+                        onExpand={() => handleItemExpand(order.id)}
+                      />
                     ))}
                   </List>
                 </TabPanel>
@@ -917,101 +718,152 @@ const GovernmentActivity = () => {
               <Box sx={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
                 <TabPanel value={stateSubTab} index={0}>
                   <List>
-                    <ListItem>
-                      <ListItemText 
-                        primary="SB 567" 
-                        secondary="Healthcare Access Expansion - Passed House" 
-                      />
-                    </ListItem>
-                    <Divider />
-                    <ListItem>
-                      <ListItemText 
-                        primary="AB 123" 
-                        secondary="Environmental Protection Act - In Committee" 
-                      />
-                    </ListItem>
+                    <GovernmentDocument
+                      id="state-bill-sb567"
+                      title="SB 567"
+                      subtitle="Healthcare Access Expansion"
+                      summary="Passed House"
+                      fullText="https://link-to-sb567"
+                      aiSummary="This bill aims to expand access to affordable healthcare across the state by increasing funding for public clinics and insurance subsidies."
+                      date="2025-03-12"
+                      expanded={expandedItems["state-bill-sb567"] || false}
+                      onExpand={() => handleItemExpand("state-bill-sb567")}
+                    />
+                    <GovernmentDocument
+                      id="state-bill-ab123"
+                      title="AB 123"
+                      subtitle="Environmental Protection Act"
+                      summary="In Committee"
+                      fullText="https://link-to-ab123"
+                      aiSummary="This bill proposes stronger regulations on industrial emissions and conservation incentives to combat climate change."
+                      date="2025-03-08"
+                      expanded={expandedItems["state-bill-ab123"] || false}
+                      onExpand={() => handleItemExpand("state-bill-ab123")}
+                    />
                   </List>
                 </TabPanel>
 
                 <TabPanel value={stateSubTab} index={1}>
                   <List>
-                    <ListItem>
-                      <ListItemText 
-                        primary="State v. Johnson" 
-                        secondary="2023 - Criminal Justice Reform" 
-                      />
-                    </ListItem>
-                    <Divider />
-                    <ListItem>
-                      <ListItemText 
-                        primary="Smith v. State Education Board" 
-                        secondary="2023 - Education Funding" 
-                      />
-                    </ListItem>
+                    <GovernmentDocument
+                      id="state-ruling-johnson"
+                      title="State v. Johnson"
+                      subtitle="Criminal Justice Reform"
+                      summary="Case ruling on bail reform policies"
+                      fullText="https://link-to-johnson-ruling"
+                      aiSummary="This case addressed constitutional challenges to new bail reform laws, impacting pretrial detention standards across the state."
+                      date="2025-02-20"
+                      expanded={expandedItems["state-ruling-johnson"] || false}
+                      onExpand={() => handleItemExpand("state-ruling-johnson")}
+                    />
+                    <GovernmentDocument
+                      id="state-ruling-smith"
+                      title="Smith v. State Education Board"
+                      subtitle="Education Funding"
+                      summary="Case on school funding inequalities"
+                      fullText="https://link-to-smith-ruling"
+                      aiSummary="This ruling mandated more equitable state funding for public schools, aiming to reduce disparities between districts."
+                      date="2025-02-15"
+                      expanded={expandedItems["state-ruling-smith"] || false}
+                      onExpand={() => handleItemExpand("state-ruling-smith")}
+                    />
                   </List>
                 </TabPanel>
 
                 <TabPanel value={stateSubTab} index={2}>
                   <List>
-                    <ListItem>
-                      <ListItemText 
-                        primary="Executive Order 2023-01" 
-                        secondary="Emergency Response Protocol Update" 
-                      />
-                    </ListItem>
-                    <Divider />
-                    <ListItem>
-                      <ListItemText 
-                        primary="Executive Order 2023-02" 
-                        secondary="State Workforce Development Initiative" 
-                      />
-                    </ListItem>
+                    <GovernmentDocument
+                      id="state-exec-2023-01"
+                      title="Executive Order 2023-01"
+                      subtitle="Emergency Response Protocol Update"
+                      summary="Updated state emergency management procedures"
+                      fullText="https://link-to-state-exec-2023-01"
+                      aiSummary="This executive order updates emergency response protocols to improve coordination among state agencies during natural disasters."
+                      date="2025-01-10"
+                      expanded={expandedItems["state-exec-2023-01"] || false}
+                      onExpand={() => handleItemExpand("state-exec-2023-01")}
+                    />
+                    <GovernmentDocument
+                      id="state-exec-2023-02"
+                      title="Executive Order 2023-02"
+                      subtitle="Workforce Development Initiative"
+                      summary="New programs to expand vocational training"
+                      fullText="https://link-to-state-exec-2023-02"
+                      aiSummary="This order establishes workforce development centers focused on providing job training in high-demand industries."
+                      date="2025-01-15"
+                      expanded={expandedItems["state-exec-2023-02"] || false}
+                      onExpand={() => handleItemExpand("state-exec-2023-02")}
+                    />
                   </List>
                 </TabPanel>
               </Box>
             </Box>
           </TabPanel>
 
+
           <TabPanel value={value} index={2}>
             <List>
-              <ListItem>
-                <ListItemText 
-                  primary="City Ordinance 2024-01" 
-                  secondary="Zoning Changes - Public Hearing Scheduled" 
-                />
-              </ListItem>
-              <Divider />
-              <ListItem>
-                <ListItemText 
-                  primary="City Budget 2024" 
-                  secondary="Under review by City Council" 
-                />
-              </ListItem>
+              <GovernmentDocument
+                id="city-ordinance-2024-01"
+                title="City Ordinance 2024-01"
+                subtitle="Zoning Changes"
+                summary="Public Hearing Scheduled"
+                fullText="https://link-to-ordinance-2024-01"
+                aiSummary="This ordinance proposes zoning updates to encourage mixed-use developments and address housing shortages in urban areas."
+                date="2024-12-05"
+                expanded={expandedItems["city-ordinance-2024-01"] || false}
+                onExpand={() => handleItemExpand("city-ordinance-2024-01")}
+              />
+              <GovernmentDocument
+                id="city-budget-2024"
+                title="City Budget 2024"
+                subtitle="City Council Review"
+                summary="Budget under review for approval"
+                fullText="https://link-to-city-budget-2024"
+                aiSummary="The 2024 city budget proposes increased funding for public safety, infrastructure repairs, and affordable housing initiatives."
+                date="2024-11-15"
+                expanded={expandedItems["city-budget-2024"] || false}
+                onExpand={() => handleItemExpand("city-budget-2024")}
+              />
             </List>
           </TabPanel>
 
+
           <TabPanel value={value} index={3}>
             <List>
-              <ListItem>
-                <ListItemText 
-                  primary="UN Climate Change Conference" 
-                  secondary="COP28 - Global Climate Action Summit" 
-                />
-              </ListItem>
-              <Divider />
-              <ListItem>
-                <ListItemText 
-                  primary="Global Trade Agreement" 
-                  secondary="New international trade negotiations underway" 
-                />
-              </ListItem>
-              <Divider />
-              <ListItem>
-                <ListItemText 
-                  primary="International Health Regulations" 
-                  secondary="WHO updates on global health policies" 
-                />
-              </ListItem>
+              <GovernmentDocument
+                id="global-cop28"
+                title="UN Climate Change Conference"
+                subtitle="COP28"
+                summary="Global Climate Action Summit"
+                fullText="https://unfccc.int/cop28"
+                aiSummary="The COP28 summit gathered nations to set updated targets for carbon neutrality, climate finance, and global environmental cooperation."
+                date="2024-11-30"
+                expanded={expandedItems["global-cop28"] || false}
+                onExpand={() => handleItemExpand("global-cop28")}
+              />
+              <GovernmentDocument
+                id="global-trade-agreement"
+                title="Global Trade Agreement"
+                subtitle="New Trade Negotiations"
+                summary="International talks on trade policies"
+                fullText="https://link-to-global-trade-agreement"
+                aiSummary="This agreement seeks to update international trade rules to address supply chain resilience, digital commerce, and fair labor practices."
+                date="2025-01-20"
+                expanded={expandedItems["global-trade-agreement"] || false}
+                onExpand={() => handleItemExpand("global-trade-agreement")}
+              />
+              <GovernmentDocument
+                id="global-health-regulations"
+                title="International Health Regulations"
+                subtitle="WHO Global Updates"
+                summary="Health policy updates worldwide"
+                fullText="https://link-to-who-updates"
+                aiSummary="The WHO introduced new international health regulations aimed at improving pandemic response coordination and vaccine equity."
+                date="2025-02-01"
+                expanded={expandedItems["global-health-regulations"] || false}
+                onExpand={() => handleItemExpand("global-health-regulations")}
+              />
             </List>
           </TabPanel>
         </Box>
