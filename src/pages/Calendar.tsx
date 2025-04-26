@@ -15,6 +15,8 @@ const importantDates = [
 ];
 
 const Calendar = () => {
+  // ...rest of the component
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [openModal, setOpenModal] = useState(false);

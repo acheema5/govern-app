@@ -600,20 +600,15 @@ const GovernmentActivity = () => {
   }
 
   return (
-    <Box sx={{ 
-      width: '100%',
-      maxWidth: '1200px',
-      margin: '0 auto',
-      p: 2
-    }}>
-      <Typography variant="h4" gutterBottom align="center">
-        Government Activity
-      </Typography>
-      
+    <div className="container">
       <Paper sx={{ 
         width: '100%',
-        maxWidth: '800px',
-        margin: '0 auto'
+        maxWidth: '1200px',
+        margin: '0 auto',
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
       }}>
         <Tabs
           value={value}
@@ -868,7 +863,7 @@ const GovernmentActivity = () => {
           </TabPanel>
         </Box>
       </Paper>
-    </Box>
+      </div>
   );
 };
 
