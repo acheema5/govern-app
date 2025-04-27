@@ -5,13 +5,13 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 // Sample important dates data
 const importantDates = [
-  { date: '2024-03-15', title: 'Primary Election Day', type: 'election' },
-  { date: '2024-04-01', title: 'Tax Filing Deadline', type: 'deadline' },
-  { date: '2024-05-15', title: 'City Council Meeting', type: 'meeting' },
-  { date: '2024-06-01', title: 'State Budget Deadline', type: 'deadline' },
-  { date: '2024-07-04', title: 'Independence Day', type: 'holiday' },
-  { date: '2024-09-03', title: 'Labor Day', type: 'holiday' },
-  { date: '2024-11-05', title: 'General Election Day', type: 'election' },
+  { date: '2025-03-15', title: 'Primary Election Day', type: 'election' },
+  { date: '2025-04-01', title: 'Tax Filing Deadline', type: 'deadline' },
+  { date: '2025-05-15', title: 'City Council Meeting', type: 'meeting' },
+  { date: '2025-06-01', title: 'State Budget Deadline', type: 'deadline' },
+  { date: '2025-07-04', title: 'Independence Day', type: 'holiday' },
+  { date: '2025-09-03', title: 'Labor Day', type: 'holiday' },
+  { date: '2025-11-05', title: 'General Election Day', type: 'election' },
 ];
 
 const Calendar = () => {
