@@ -35,6 +35,16 @@ function TabPanel(props: TabPanelProps) {
           maxWidth: '800px',
           margin: '0 auto'
         }}>
+          {index === 1 && (
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
+              Washington
+            </Typography>
+          )}
+          {index === 2 && (
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
+              Seattle
+            </Typography>
+          )}
           {children}
         </Box>
       )}
