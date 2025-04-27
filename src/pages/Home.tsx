@@ -1,110 +1,108 @@
-import { useState, useEffect } from 'react';
-import {
-  Container,
-  Typography,
-  Paper,
+import React from 'react';
+import { 
+  Container, 
+  Typography, 
+  Box, 
+  Paper, 
+  Grid,
   Card,
   CardContent,
-  Box,
-  Chip,
+  Button
 } from '@mui/material';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
-import { getBiasColor, getBiasBackgroundColor } from '../utils/colors';
+import { styled } from '@mui/material/styles';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import GavelIcon from '@mui/icons-material/Gavel';
+import InfoIcon from '@mui/icons-material/Info';
+import EventIcon from '@mui/icons-material/Event';
+import { useNavigate } from 'react-router-dom';
 
-interface NewsItem {
-  title: string;
-  category: string;
-  bias: 'left' | 'center' | 'right';
-}
+const HeroSection = styled(Paper)(({ theme }) => ({
+  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+  color: 'white',
+  padding: theme.spacing(6),
+  marginBottom: theme.spacing(4),
+  borderRadius: theme.shape.borderRadius,
+  position: 'relative',
+  overflow: 'hidden',
+}));
 
-const mockWeeklyHighlights: NewsItem[] = [
-  {
-    title: "New Voting Rights Bill Introduced in Congress",
-    category: "Politics",
-    bias: "center"
+const FeatureCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'transform 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-4px)',
   },
-  {
-    title: "State Legislature Debates Election Reform",
-    category: "State",
-    bias: "left"
-  },
-  {
-    title: "Supreme Court to Review Voter ID Laws",
-    category: "Legal",
-    bias: "right"
-  }
-];
+}));
 
 const Home = () => {
-  const [funFact, setFunFact] = useState("On this day in 1965, the Voting Rights Act was signed into law.");
-  
+  const navigate = useNavigate();
+
+  const features = [
+    {
+      title: 'Voter Information',
+      description: 'Find your polling location, check registration status, and learn about voting requirements.',
+      icon: <HowToVoteIcon fontSize="large" color="primary" />,
+      path: '/voter-info',
+    },
+    {
+      title: 'Government Activity',
+      description: 'Track legislation, executive orders, and government actions at all levels.',
+      icon: <GavelIcon fontSize="large" color="primary" />,
+      path: '/government',
+    },
+    {
+      title: 'Important Issues',
+      description: 'Stay informed about key political and social issues affecting your community.',
+      icon: <InfoIcon fontSize="large" color="primary" />,
+      path: '/issues',
+    },
+    {
+      title: 'Important Dates',
+      description: 'View upcoming elections, deadlines, and important civic events.',
+      icon: <EventIcon fontSize="large" color="primary" />,
+      path: '/dates',
+    },
+  ];
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Welcome to CivicEngage
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+      <HeroSection elevation={3}>
+        <Typography variant="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
+          Welcome to Govern
         </Typography>
-        <Typography variant="h6" color="textSecondary" paragraph>
-          What would you like to learn about today?
+        <Typography variant="h6" sx={{ opacity: 0.9 }}>
+          Your comprehensive platform for civic engagement and political awareness
         </Typography>
-        <Typography variant="body1" paragraph>
-          Stay informed about your representatives, upcoming bills, and make your voice heard in democracy.
-        </Typography>
-      </Paper>
+      </HeroSection>
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(66.666% - 16px)' } }}>
-          <Paper elevation={2} sx={{ p: 3 }}>
-            <Box display="flex" alignItems="center" mb={2}>
-              <TrendingUpIcon sx={{ mr: 1 }} color="primary" />
-              <Typography variant="h5">This Week's Highlights</Typography>
-            </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {mockWeeklyHighlights.map((item, index) => (
-                <Card 
-                  key={index}
-                  variant="outlined"
-                  sx={{
-                    bgcolor: getBiasBackgroundColor(item.bias),
-                    transition: 'background-color 0.3s ease',
-                    '&:hover': {
-                      bgcolor: getBiasBackgroundColor(item.bias).replace('0.15', '0.25'),
-                    }
-                  }}
+      <Grid container spacing={3}>
+        {features.map((feature) => (
+          <Grid item xs={12} sm={6} md={3} key={feature.title}>
+            <FeatureCard>
+              <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+                <Box sx={{ mb: 2 }}>
+                  {feature.icon}
+                </Box>
+                <Typography variant="h6" gutterBottom>
+                  {feature.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  {feature.description}
+                </Typography>
+                <Button 
+                  variant="contained" 
+                  fullWidth
+                  onClick={() => navigate(feature.path)}
                 >
-                  <CardContent>
-                    <Typography variant="h6">{item.title}</Typography>
-                    <Box display="flex" gap={1} mt={1}>
-                      <Chip label={item.category} size="small" />
-                      <Chip
-                        label={item.bias}
-                        size="small"
-                        sx={{
-                          bgcolor: getBiasColor(item.bias, 0.8),
-                          color: 'white',
-                        }}
-                      />
-                    </Box>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          </Paper>
-        </Box>
-
-        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(33.333% - 16px)' } }}>
-          <Paper elevation={2} sx={{ p: 3 }}>
-            <Box display="flex" alignItems="center" mb={2}>
-              <EmojiObjectsIcon sx={{ mr: 1 }} color="primary" />
-              <Typography variant="h5">Fun Fact</Typography>
-            </Box>
-            <Typography variant="body1">
-              {funFact}
-            </Typography>
-          </Paper>
-        </Box>
-      </Box>
+                  Explore
+                </Button>
+              </CardContent>
+            </FeatureCard>
+          </Grid>
+        ))}
+      </Grid>
     </Container>
   );
 };

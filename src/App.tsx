@@ -169,7 +169,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/government-activity" 
+                path="/government" 
                 element={
                   <ProtectedRoute>
                     <GovernmentActivity />
@@ -177,7 +177,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/important-issues" 
+                path="/issues" 
                 element={
                   <ProtectedRoute>
                     <ImportantIssues />
@@ -185,7 +185,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/calendar" 
+                path="/dates" 
                 element={
                   <ProtectedRoute>
                     <Calendar />
