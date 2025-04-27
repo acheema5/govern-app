@@ -4,15 +4,20 @@ import CloseIcon from '@mui/icons-material/Close';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 // Sample important dates data
+// Important political and civic dates for 2025
 const importantDates = [
-  { date: '2025-03-15', title: 'Primary Election Day', type: 'election' },
-  { date: '2025-04-01', title: 'Tax Filing Deadline', type: 'deadline' },
-  { date: '2025-05-15', title: 'City Council Meeting', type: 'meeting' },
-  { date: '2025-06-01', title: 'State Budget Deadline', type: 'deadline' },
-  { date: '2025-07-04', title: 'Independence Day', type: 'holiday' },
-  { date: '2025-09-03', title: 'Labor Day', type: 'holiday' },
-  { date: '2025-11-05', title: 'General Election Day', type: 'election' },
+  { date: '2025-03-15', title: 'City Council Public Hearing', type: 'meeting' },
+  { date: '2025-04-15', title: 'Federal Tax Filing Deadline', type: 'deadline' },
+  { date: '2025-05-06', title: 'Local Primary Elections', type: 'election' }, // Typical primary date
+  { date: '2025-06-30', title: 'End of State Fiscal Year', type: 'deadline' },
+  { date: '2025-07-15', title: 'Campaign Finance Filing Deadline', type: 'deadline' },
+  { date: '2025-08-20', title: 'Candidate Filing Deadline for General Election', type: 'deadline' },
+  { date: '2025-09-15', title: 'City Council Budget Meeting', type: 'meeting' },
+  { date: '2025-10-07', title: 'Voter Registration Deadline', type: 'deadline' },
+  { date: '2025-11-04', title: 'General Election Day', type: 'election' },
+  { date: '2025-11-18', title: 'Certification of Election Results', type: 'deadline' },
 ];
+
 
 const Calendar = () => {
   // ...rest of the component
