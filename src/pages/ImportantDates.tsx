@@ -3,23 +3,20 @@ import { Box, Typography, Paper, List, ListItem, ListItemText, Divider, Chip, Bu
 import CloseIcon from '@mui/icons-material/Close';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-// Sample important dates data
 const importantDates = [
   { date: '2025-03-15', title: 'Primary Election Day', type: 'election' },
   { date: '2025-04-01', title: 'Tax Filing Deadline', type: 'deadline' },
   { date: '2025-05-15', title: 'City Council Meeting', type: 'meeting' },
   { date: '2025-06-01', title: 'State Budget Deadline', type: 'deadline' },
-  { date: '2025-07-04', title: 'Independence Day', type: 'holiday' },
-  { date: '2025-09-03', title: 'Labor Day', type: 'holiday' },
   { date: '2025-11-05', title: 'General Election Day', type: 'election' },
 ];
 
 const ImportantDates = () => {
   const [currentDate, setCurrentDate] = useState(new Date(2025, 0, 1));
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
-  const getDateEvents = (date: Date) => {
+  const getDateEvents = (date) => {
     return importantDates.filter(event => {
       const eventDate = new Date(event.date);
       return eventDate.getFullYear() === date.getFullYear() &&
@@ -28,45 +25,36 @@ const ImportantDates = () => {
     });
   };
 
-  const getChipColor = (type: string) => {
+  const getChipColor = (type) => {
     switch (type) {
-      case 'election':
-        return 'primary';
-      case 'deadline':
-        return 'error';
-      case 'meeting':
-        return 'info';
-      case 'holiday':
-        return 'success';
-      default:
-        return 'default';
+      case 'election': return 'primary';
+      case 'deadline': return 'error';
+      case 'meeting': return 'info';
+      default: return 'default';
     }
   };
 
-  const getDaysInMonth = (date: Date) => {
+  const getDaysInMonth = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const days = [];
-    
-    // Add days from previous month to start on Sunday
+
     const firstDayOfWeek = firstDay.getDay();
     for (let i = 0; i < firstDayOfWeek; i++) {
       days.push(new Date(year, month, -i));
     }
-    
-    // Add days of current month
+
     for (let i = 1; i <= lastDay.getDate(); i++) {
       days.push(new Date(year, month, i));
     }
-    
-    // Add days from next month to complete the grid
-    const remainingDays = 42 - days.length; // 6 rows * 7 days
+
+    const remainingDays = 42 - days.length;
     for (let i = 1; i <= remainingDays; i++) {
       days.push(new Date(year, month + 1, i));
     }
-    
+
     return days;
   };
 
@@ -78,11 +66,11 @@ const ImportantDates = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date) => {
     return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   };
 
-  const isToday = (date: Date) => {
+  const isToday = (date) => {
     const today = new Date();
     return date.getDate() === today.getDate() &&
            date.getMonth() === today.getMonth() &&
@@ -91,7 +79,7 @@ const ImportantDates = () => {
 
   const daysInMonth = getDaysInMonth(currentDate);
 
-  const handleDateClick = (date: Date) => {
+  const handleDateClick = (date) => {
     const events = getDateEvents(date);
     if (events.length > 0) {
       setSelectedDate(date);
@@ -105,117 +93,31 @@ const ImportantDates = () => {
   };
 
   return (
-    <Box sx={{ 
-      width: '100%',
-      maxWidth: '1000px',
-      margin: '0 auto',
-      p: 2,
-      backgroundColor: '#f5f5f5',
-      borderRadius: 2,
-      boxShadow: 3
-    }}>
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        gap: 2,
-        mb: 3
-      }}>
-        <CalendarMonthIcon sx={{ 
-          fontSize: 40, 
-          color: 'primary.main',
-          animation: 'pulse 2s infinite',
-          '@keyframes pulse': {
-            '0%': { transform: 'scale(1)' },
-            '50%': { transform: 'scale(1.1)' },
-            '100%': { transform: 'scale(1)' }
-          }
-        }} />
-        <Typography variant="h4" sx={{ 
-          color: 'primary.main',
-          fontWeight: 'bold',
-          textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
-        }}>
-          Important Dates
-        </Typography>
+    <Box sx={{ width: '100%', maxWidth: '1000px', margin: '0 auto', p: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 3 }}>
+        <CalendarMonthIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+        <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold' }}>Important Dates</Typography>
       </Box>
 
       <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
         <Box sx={{ flex: 1 }}>
-          <Paper sx={{ 
-            p: 3, 
-            height: '100%',
-            backgroundColor: 'white',
-            borderRadius: 2,
-            boxShadow: 2
-          }}>
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              mb: 3,
-              borderBottom: '2px solid',
-              borderColor: 'primary.main',
-              pb: 2
-            }}>
-              <Button 
-                onClick={prevMonth}
-                variant="contained"
-                size="small"
-                color="primary"
-              >
-                &lt;
-              </Button>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                {formatDate(currentDate)}
-              </Typography>
-              <Button 
-                onClick={nextMonth}
-                variant="contained"
-                size="small"
-                color="primary"
-              >
-                &gt;
-              </Button>
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Button onClick={prevMonth} variant="contained" size="small" color="primary">&lt;</Button>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>{formatDate(currentDate)}</Typography>
+              <Button onClick={nextMonth} variant="contained" size="small" color="primary">&gt;</Button>
             </Box>
-            
-            <Box sx={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(7, 1fr)', 
-              gap: 2,
-              '& > *': {
-                textAlign: 'center',
-                p: 2,
-                minHeight: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'white',
-                borderRadius: 1,
-                boxShadow: 1
-              }
-            }}>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                <Typography 
-                  key={day} 
-                  variant="subtitle1" 
-                  sx={{ 
-                    fontWeight: 'bold',
-                    color: 'primary.main',
-                    borderBottom: '2px solid',
-                    borderColor: 'primary.light',
-                    pb: 2
-                  }}
-                >
-                  {day}
-                </Typography>
+                <Typography key={day} variant="subtitle1" sx={{ fontWeight: 'bold', color: 'primary.main', textAlign: 'center' }}>{day}</Typography>
               ))}
-              
+
               {daysInMonth.map((day, index) => {
                 const events = getDateEvents(day);
                 const isCurrentMonth = day.getMonth() === currentDate.getMonth();
                 const isCurrentDay = isToday(day);
-                
+
                 return (
                   <Box
                     key={index}
@@ -225,27 +127,27 @@ const ImportantDates = () => {
                       border: '2px solid',
                       borderColor: isCurrentMonth ? 'primary.light' : 'grey.200',
                       borderRadius: 2,
-                      backgroundColor: isCurrentMonth ? 'white' : 'grey.50',
+                      backgroundColor: events.length > 0 
+                        ? 'primary.light' 
+                        : (isCurrentMonth ? 'white' : 'grey.50'),
                       ...(isCurrentDay && {
                         backgroundColor: 'primary.main',
                         color: 'white',
                         fontWeight: 'bold',
                         borderColor: 'primary.main',
                       }),
-                      ...(events.length > 0 && {
-                        borderColor: 'primary.main',
-                        borderWidth: 2,
-                        cursor: 'pointer',
-                        '&:hover': {
-                          backgroundColor: 'primary.light',
-                          color: 'white',
-                          transform: 'scale(1.05)',
-                          transition: 'all 0.2s',
-                        }
-                      }),
-                      '&:hover': {
-                        backgroundColor: 'grey.100',
-                      }
+                      cursor: events.length > 0 ? 'pointer' : 'default',
+                      transition: 'all 0.2s',
+                      '&:hover': events.length > 0 ? {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        transform: 'scale(1.05)',
+                      } : {},
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      p: 1
                     }}
                   >
                     <Typography 
@@ -257,29 +159,17 @@ const ImportantDates = () => {
                     >
                       {day.getDate()}
                     </Typography>
+
                     {events.length > 0 && (
                       <Box
                         sx={{
-                          position: 'absolute',
-                          bottom: 8,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          display: 'flex',
-                          gap: 1
+                          mt: 1,
+                          width: 10,
+                          height: 10,
+                          borderRadius: '50%',
+                          backgroundColor: 'primary.main'
                         }}
-                      >
-                        {events.map((event, idx) => (
-                          <Box
-                            key={idx}
-                            sx={{
-                              width: 8,
-                              height: 8,
-                              borderRadius: '50%',
-                              backgroundColor: getChipColor(event.type)
-                            }}
-                          />
-                        ))}
-                      </Box>
+                      />
                     )}
                   </Box>
                 );
@@ -289,70 +179,37 @@ const ImportantDates = () => {
         </Box>
 
         <Box sx={{ flex: 1 }}>
-          <Paper sx={{ p: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Upcoming Events
-            </Typography>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>Upcoming Events</Typography>
             <List>
-              {importantDates
-                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                .map((event, index) => (
-                  <Box key={event.date}>
-                    <ListItem>
-                      <ListItemText
-                        primary={
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography variant="subtitle1">
-                              {new Date(event.date).toLocaleDateString('en-US', { 
-                                month: 'long', 
-                                day: 'numeric', 
-                                year: 'numeric' 
-                              })}
-                            </Typography>
-                            <Chip 
-                              label={event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                              color={getChipColor(event.type)}
-                              size="small"
-                            />
-                          </Box>
-                        }
-                        secondary={event.title}
-                      />
-                    </ListItem>
-                    {index < importantDates.length - 1 && <Divider />}
-                  </Box>
-                ))}
+              {importantDates.sort((a, b) => new Date(a.date) - new Date(b.date)).map((event, index) => (
+                <Box key={event.date}>
+                  <ListItem>
+                    <ListItemText
+                      primary={
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="subtitle1">
+                            {new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                          </Typography>
+                          <Chip label={event.type.charAt(0).toUpperCase() + event.type.slice(1)} color={getChipColor(event.type)} size="small" />
+                        </Box>
+                      }
+                      secondary={event.title}
+                    />
+                  </ListItem>
+                  {index < importantDates.length - 1 && <Divider />}
+                </Box>
+              ))}
             </List>
           </Paper>
         </Box>
       </Box>
 
-      <Modal
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby="date-events-modal"
-      >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
-          maxHeight: '80vh',
-          overflowY: 'auto'
-        }}>
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4, borderRadius: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6" component="h2">
-              {selectedDate?.toLocaleDateString('en-US', { 
-                weekday: 'long',
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric' 
-              })}
+            <Typography variant="h6">
+              {selectedDate?.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
             </Typography>
             <IconButton onClick={handleCloseModal} size="small">
               <CloseIcon />
@@ -365,14 +222,8 @@ const ImportantDates = () => {
                   <ListItemText
                     primary={
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Chip 
-                          label={event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                          color={getChipColor(event.type)}
-                          size="small"
-                        />
-                        <Typography variant="subtitle1">
-                          {event.title}
-                        </Typography>
+                        <Chip label={event.type.charAt(0).toUpperCase() + event.type.slice(1)} color={getChipColor(event.type)} size="small" />
+                        <Typography variant="subtitle1">{event.title}</Typography>
                       </Box>
                     }
                   />
@@ -387,4 +238,4 @@ const ImportantDates = () => {
   );
 };
 
-export default ImportantDates; 
+export default ImportantDates;
