@@ -126,8 +126,8 @@ const Login = () => {
             width: '100%'
           }}
         >
-          <Typography variant="h4" gutterBottom align="center">
-            Welcome to CivicEngage
+          <Typography variant="h4" component="h1" gutterBottom>
+            Welcome to Civil Lens
           </Typography>
           <Typography variant="body1" paragraph align="center" color="textSecondary">
             Your platform for civic engagement

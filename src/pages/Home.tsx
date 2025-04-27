@@ -70,7 +70,7 @@ const Home = () => {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
       <HeroSection elevation={3}>
         <Typography variant="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
-          Welcome to Govern
+          Welcome to Civil Lens
         </Typography>
         <Typography variant="h6" sx={{ opacity: 0.9 }}>
           Your comprehensive platform for civic engagement and political awareness
