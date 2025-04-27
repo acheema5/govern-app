@@ -15,6 +15,7 @@ interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  isSubTab?: boolean;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -35,12 +36,12 @@ function TabPanel(props: TabPanelProps) {
           maxWidth: '800px',
           margin: '0 auto'
         }}>
-          {index === 1 && (
+          {index === 1 && !props.isSubTab && (
             <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
               Washington
             </Typography>
           )}
-          {index === 2 && (
+          {index === 2 && !props.isSubTab && (
             <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
               Seattle
             </Typography>
@@ -647,7 +648,7 @@ const GovernmentActivity = () => {
               </Tabs>
 
               <Box sx={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
-                <TabPanel value={federalSubTab} index={0}>
+                <TabPanel value={federalSubTab} index={0} isSubTab>
                   <List>
                     {bills.map((bill) => (
                       <GovernmentDocument
@@ -666,7 +667,7 @@ const GovernmentActivity = () => {
                   </List>
                 </TabPanel>
 
-                <TabPanel value={federalSubTab} index={1}>
+                <TabPanel value={federalSubTab} index={1} isSubTab>
                   <List>
                     {rulings.map((ruling) => (
                       <GovernmentDocument
@@ -685,7 +686,7 @@ const GovernmentActivity = () => {
                   </List>
                 </TabPanel>
 
-                <TabPanel value={federalSubTab} index={2}>
+                <TabPanel value={federalSubTab} index={2} isSubTab>
                   <List>
                     {orders.map((order) => (
                       <GovernmentDocument
