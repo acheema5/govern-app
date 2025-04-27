@@ -4,17 +4,17 @@ import {
   Typography, 
   Box, 
   Paper, 
-  Grid,
-  Card,
-  CardContent,
-  Button
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Chip
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import GavelIcon from '@mui/icons-material/Gavel';
-import InfoIcon from '@mui/icons-material/Info';
 import EventIcon from '@mui/icons-material/Event';
-import { useNavigate } from 'react-router-dom';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import GavelIcon from '@mui/icons-material/Gavel';
 
 const HeroSection = styled(Paper)(({ theme }) => ({
   background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
@@ -26,45 +26,45 @@ const HeroSection = styled(Paper)(({ theme }) => ({
   overflow: 'hidden',
 }));
 
-const FeatureCard = styled(Card)(({ theme }) => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  transition: 'transform 0.2s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-4px)',
-  },
+const FunFactCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(4),
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.background.paper,
+  boxShadow: '0 4px 12px rgba(0,0,0,0.07)',
 }));
 
 const Home = () => {
-  const navigate = useNavigate();
-
-  const features = [
+  // Hardcoded weekly events
+  const weeklyEvents = [
     {
-      title: 'Voter Information',
-      description: 'Find your polling location, check registration status, and learn about voting requirements.',
-      icon: <HowToVoteIcon fontSize="large" color="primary" />,
-      path: '/voter-info',
+      date: 'April 25, 2025',
+      title: 'Supreme Court Ruling on AI Regulation',
+      description: 'The Supreme Court issued a landmark ruling on the regulation of artificial intelligence in the workplace.',
+      type: 'Court Ruling',
+      icon: <GavelIcon />
     },
     {
-      title: 'Government Activity',
-      description: 'Track legislation, executive orders, and government actions at all levels.',
-      icon: <GavelIcon fontSize="large" color="primary" />,
-      path: '/government',
+      date: 'April 24, 2025',
+      title: 'Climate Resilience Bill Passes House',
+      description: 'The House passed a major climate resilience bill with bipartisan support.',
+      type: 'Legislation',
+      icon: <TrendingUpIcon />
     },
     {
-      title: 'Important Issues',
-      description: 'Stay informed about key political and social issues affecting your community.',
-      icon: <InfoIcon fontSize="large" color="primary" />,
-      path: '/issues',
-    },
-    {
-      title: 'Important Dates',
-      description: 'View upcoming elections, deadlines, and important civic events.',
-      icon: <EventIcon fontSize="large" color="primary" />,
-      path: '/dates',
-    },
+      date: 'April 23, 2025',
+      title: 'Presidential Executive Order on Cybersecurity',
+      description: 'New executive order strengthens federal cybersecurity standards.',
+      type: 'Executive Action',
+      icon: <EventIcon />
+    }
   ];
+
+  // Hardcoded fun fact
+  const funFact = {
+    fact: "The U.S. Constitution has been amended 27 times, with the first 10 amendments (the Bill of Rights) being ratified in 1791 and the most recent amendment (27th) being ratified in 1992.",
+    source: "National Archives"
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
@@ -77,32 +77,65 @@ const Home = () => {
         </Typography>
       </HeroSection>
 
-      <Grid container spacing={3}>
-        {features.map((feature) => (
-          <Grid item xs={12} sm={6} md={3} key={feature.title}>
-            <FeatureCard>
-              <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                <Box sx={{ mb: 2 }}>
-                  {feature.icon}
-                </Box>
-                <Typography variant="h6" gutterBottom>
-                  {feature.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph>
-                  {feature.description}
-                </Typography>
-                <Button 
-                  variant="contained" 
-                  fullWidth
-                  onClick={() => navigate(feature.path)}
-                >
-                  Explore
-                </Button>
-              </CardContent>
-            </FeatureCard>
-          </Grid>
-        ))}
-      </Grid>
+      <FunFactCard elevation={3}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <LightbulbIcon color="primary" sx={{ mr: 1 }} />
+          <Typography variant="h5" component="h2">
+            Fun Fact of the Day
+          </Typography>
+        </Box>
+        <Typography variant="body1" paragraph>
+          {funFact.fact}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          Source: {funFact.source}
+        </Typography>
+      </FunFactCard>
+
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+          <EventIcon color="primary" sx={{ mr: 1 }} />
+          <Typography variant="h5" component="h2">
+            What's Happened This Week
+          </Typography>
+        </Box>
+        <List>
+          {weeklyEvents.map((event, index) => (
+            <React.Fragment key={index}>
+              <ListItem alignItems="flex-start">
+                <ListItemText
+                  primary={
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      {event.icon}
+                      <Typography variant="h6" component="span" sx={{ ml: 1 }}>
+                        {event.title}
+                      </Typography>
+                    </Box>
+                  }
+                  secondary={
+                    <>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        {event.date}
+                      </Typography>
+                      <Typography variant="body1" component="span">
+                        {event.description}
+                      </Typography>
+                    </>
+                  }
+                />
+                <Chip 
+                  label={event.type} 
+                  size="small" 
+                  color="primary" 
+                  variant="outlined"
+                  sx={{ ml: 2 }}
+                />
+              </ListItem>
+              {index < weeklyEvents.length - 1 && <Divider variant="inset" component="li" />}
+            </React.Fragment>
+          ))}
+        </List>
+      </Paper>
     </Container>
   );
 };

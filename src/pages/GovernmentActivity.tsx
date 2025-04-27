@@ -283,7 +283,7 @@ const processBills = async (billsData: any[]): Promise<Bill[]> => {
         
         const processedBill: Bill = {
           id: billId,
-          number: `${bill.billType?.toUpperCase() || 'H.R.'} ${bill.billNumber || 'Unknown'}`,
+          number: bill.billNumber ? `${bill.billType?.toUpperCase() || 'H.R.'} ${bill.billNumber}` : '',
           title: bill.title || 'Untitled Bill',
           summary: bill.summary || 'No summary available',
           fullText: bill.congress ? 
@@ -643,9 +643,9 @@ const GovernmentActivity = () => {
                       <GovernmentDocument
                         key={bill.id}
                         id={bill.id}
-                        title={bill.number}
-                        subtitle={bill.title}
-                        summary={bill.summary}
+                        title={bill.title}
+                        subtitle={bill.number}
+                        summary={bill.status}
                         fullText={bill.fullText}
                         aiSummary={bill.aiSummary}
                         date={bill.date}
